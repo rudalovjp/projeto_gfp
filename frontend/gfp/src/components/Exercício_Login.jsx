@@ -1,15 +1,11 @@
 // import './login.css';
 import { useState } from 'react';
 import { enderecoServidor } from '../utils';
-import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function Exercicio_Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [logado, setLogado] = useState("");
-    const [lembrar, setLembrar] = useState(false);
-
-    const navigate = useNavigate(); // Hook para navegação entre páginas
 
     async function botaoEntrar(e) {
         e.preventDefault();
@@ -27,13 +23,11 @@ export default function Login() {
                     senha: senha
                 })
             })
-            
             if (resposta.ok) {
                 const dados = await resposta.json();
                 //no projeto não irá retornar uma mensagem, mas sim uma nova página
                 setLogado('Login bem-sucedido!');
-                localStorage.setItem('Usuario logado', JSON.stringify({...dados, lembrar})); // Armazena o token no localStorage
-                navigate('/principal'); // Redireciona para a página principal após o login bem-sucedido
+                localStorage.setItem('Usuario logado', JSON.stringify(dados)); // Armazena o token no localStorage
             } else {
                 setLogado('Email ou senha incorretos')
                 throw new Error('Email ou senha incorretos!');
@@ -63,11 +57,6 @@ export default function Login() {
                 onChange={(e) => setSenha(e.target.value)}
                 value={senha}
             />
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <input type="checkbox" style={{ marginRight: '5px'}}
-                checked={lembrar} onChange={(e) => setLembrar(e.target.checked)}/>
-                <label>Lembrar-me</label>
-            </div>
             <button className="login-button" onClick={botaoEntrar}>
                 Entrar
             </button>

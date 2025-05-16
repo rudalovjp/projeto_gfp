@@ -53,8 +53,8 @@ class rotasCategorias {
                 return res.status(400).json({ message: 'Nenhum campo fornecido para atualização' });
             }
             const query = `UPDATE categorias
-                            SET ${campos.join(', ')} 
-                            WHERE id_categoria = $${valores.length + 1}
+                            SET ${campos.join(',')} 
+                            WHERE id_categoria = ${id_categoria}
                             RETURNING *`;
                 const categoria = await BD.query(query, valores);
                 if (categoria.rows.length === 0) {
@@ -94,6 +94,19 @@ class rotasCategorias {
             res.status(200).json(categoria.rows[0]);
         } catch (error) {
             res.status(500).json({ error: 'Erro ao listar categoria', error: error.message });
+        }
+    }
+    static async filtrarCategoria (req, res) {
+        const { tipo_transacao } = req.query;
+
+        try {
+            const query = 'SELECT * FROM categorias WHERE tipo_transacao = $1 AND ativo = true ORDER BY nome DESC';
+            const valores = [tipo_transacao]
+            const resposta = await BD.query(query,valores) 
+            return res.status(200).json(resposta.rows)
+        } catch(error){
+            console.error('Erro ao filtrar categoria', error);
+            res.status(500).json({ message: 'Erro ao filtrar categoria', error: error.message });
         }
     }
 }

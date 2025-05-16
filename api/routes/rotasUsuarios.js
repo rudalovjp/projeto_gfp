@@ -2,7 +2,7 @@ import { BD } from '../db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY || 'chave-secreta'; // Chave secreta para assinar o token JWT
+const SECRET_KEY = 'chave_api_gfp'; // Chave secreta para assinar o token JWT
 
 class rotasUsuarios {
     static async novoUsuario(req, res) {
@@ -48,7 +48,9 @@ class rotasUsuarios {
         }
         if(senha !== undefined){
             campos.push(`senha = $${valores.length + 1}`)
-            valores.push(senha)
+            const saltRounds = 10; // Número de rounds para o bcrypt
+            const senhaCriptografada = await bcrypt.hash(senha, saltRounds); // Criptografa a senha
+            valores.push(senhaCriptografada)
         }
         if(tipo_acesso !== undefined){
             campos.push(`tipo_acesso = $${valores.length + 1}`)
@@ -89,7 +91,7 @@ class rotasUsuarios {
  
         try{
           const resultado = await BD.query(
-            `SELECT * FROM usuarios WHERE email = $1`,
+            `SELECT * FROM usuarios WHERE email = $1 and ativo = true`,
             [email]
           );
  
@@ -106,22 +108,16 @@ class rotasUsuarios {
  
           const token = jwt.sign(
             { 
-                id_usuario: usuario.id_usuario,
+                id: usuario.id_usuario,
                 nome: usuario.nome,
-                email: usuario.email,
-                senha: usuario.senha,
-                tipo_acesso: usuario.tipo_acesso
-            }, JWT_SECRET,
+                email: usuario.email
+            }, SECRET_KEY,
             { expiresIn: '1h' });
-
-            res.status(200).json({
-            mensagem: "Login bem-sucedido",
-            token: token
-            })
- 
-          return res.status(200).json({message: "Login bem-sucedido"});
-          // return res.status(200).json({message: "Login bem-sucedido", usuario});
- 
+            return res.status(200).json({ token,                
+                id_usuario: usuario.id_usuario,
+                nome: usuario.nome, 
+                email: usuario.email, 
+                tipo_acesso: usuario.tipo_acesso });
         } catch (error) {
           console.error("Erro ao logar:", error);
           res.status(500).json({ message: "Erro ao logar", error: error.message });
@@ -145,6 +141,24 @@ class rotasUsuarios {
             res.status(500).json({ message: 'Erro ao listar usuário', error: error.message });
         }
     }
+}
+export function autenticarToken(req, res, next){
+    //extrair do token o cabeçalho da requisição
+    const token = req.headers['authorization'];//Bearer<token>
+
+    //verificar se otoken foi fornecido na requisição
+    if(!token) return res.status(403).json({message: "Token não fornecido"})
+
+    //verificar se o token é valido
+    //jwt.verify que valida se o token é legitimo
+    jwt.verify(token.split(' ')[1], SECRET_KEY, (err, usuario) => {
+        if(err) return res.status(403).json({message: "Token inválido"})
+        
+        //se o token for valido, adiciona os dados do usuario(decodificados no token)
+        //tornando essas informações disponíveis para as próximas rotas que precisam da autenticação
+        req.usuario = usuario;
+        next(); //chama o proximo middleware ou rota
+    })
 }
 
 export default rotasUsuarios;

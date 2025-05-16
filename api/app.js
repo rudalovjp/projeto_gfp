@@ -4,8 +4,9 @@ import cors from 'cors';
 import rotasUsuarios from './routes/rotasUsuarios.js';
 import rotasCategorias from './routes/rotasCategorias.js';
 import rotasSubCategorias from './routes/rotasSubCategorias.js';
-import rotasLocalTransacoes from './routes/rotasLocalTransacoes.js';
+import rotasContas from './routes/rotasContas.js';
 import rotasTransacoes from './routes/rotasTransacoes.js';
+import { autenticarToken } from './autenticarToken.js';
 
 const app = express();
  //testa a conexão com o banco de dados
@@ -21,39 +22,44 @@ app.get('/', (req, res) => {
 app.post('/usuarios', rotasUsuarios.novoUsuario)
 app.put('/usuarios/:id_usuario', rotasUsuarios.atualizarUsuario)
 app.delete('/usuarios/:id_usuario', rotasUsuarios.deletarUsuario)
-app.get('/usuarios', rotasUsuarios.listarUsuarios)
+app.get('/usuarios',autenticarToken, rotasUsuarios.listarUsuarios)
 app.get('/usuarios/:id_usuario', rotasUsuarios.listarUsuarioPorId)
 app.patch('/usuarios/:id_usuario', rotasUsuarios.atualizar)
-app.post('/login', rotasUsuarios.login)
+app.post('/usuarios/login', rotasUsuarios.login)
 
 //Rotas categorias
-app.post('/categorias', rotasCategorias.novaCategoria)
-app.put('/categorias/:id_categoria', rotasCategorias.atualizarCategoria)
-app.get('/categorias', rotasCategorias.listarCategorias)
-app.delete('/categorias/:id_categoria', rotasCategorias.deletarCategoria)
-app.patch('/categorias/:id_categoria', rotasCategorias.atualizar)
-app.get('/categorias/:id_categoria', rotasCategorias.listarCategoriaPorId)
+app.post('/categorias', autenticarToken, rotasCategorias.novaCategoria)
+app.put('/categorias/:id_categoria', autenticarToken, rotasCategorias.atualizarCategoria)
+app.get('/categorias/filtrarCategoria', autenticarToken, rotasCategorias.filtrarCategoria)
+app.get('/categorias', autenticarToken, rotasCategorias.listarCategorias)
+app.delete('/categorias/:id_categoria', autenticarToken, rotasCategorias.deletarCategoria)
+app.patch('/categorias/:id_categoria', autenticarToken, rotasCategorias.atualizar)
+app.get('/categorias/:id_categoria', autenticarToken, rotasCategorias.listarCategoriaPorId)
 
 //Rotas subcategorias
-app.post('/subcategorias', rotasSubCategorias.novaSubCategoria)
-app.put('/subcategorias/:id_subcategoria', rotasSubCategorias.atualizarSubCategoria)
-app.get('/subcategorias', rotasSubCategorias.listarSubCategorias)
-app.delete('/subcategorias/:id_subcategoria', rotasSubCategorias.deletarSubCategoria)
-app.get('/subcategorias/:id_subcategoria', rotasSubCategorias.listarSubCategoriaPorId)
+app.post('/subcategorias', autenticarToken, rotasSubCategorias.novaSubCategoria)
+app.put('/subcategorias/:id_subcategoria', autenticarToken, rotasSubCategorias.atualizarSubCategoria)
+app.get('/subcategorias', autenticarToken, rotasSubCategorias.listarSubCategorias)
+app.delete('/subcategorias/:id_subcategoria', autenticarToken, rotasSubCategorias.deletarSubCategoria)
+app.get('/subcategorias/:id_subcategoria', autenticarToken, rotasSubCategorias.listarSubCategoriaPorId)
 
 //Rotas locais de transações
-app.post('/localtransacoes', rotasLocalTransacoes.nova)
-app.put('/localtransacoes/:id_local_transacao', rotasLocalTransacoes.atualizar)
-app.get('/localtransacoes', rotasLocalTransacoes.listar)
-app.delete('/localtransacoes/:id_local_transacao', rotasLocalTransacoes.deletar)
-app.get('/localtransacoes/:id_local_transacao', rotasLocalTransacoes.listarPorID)
+app.post('/contas', autenticarToken, rotasContas.nova)
+app.get('/contas/filtrarConta', autenticarToken, rotasContas.filtrarConta)
+app.put('/contas/:id_conta', autenticarToken, rotasContas.atualizar)
+app.get('/contas', autenticarToken, rotasContas.listar)
+app.delete('/contas/:id_conta', autenticarToken, rotasContas.deletar)
+app.get('/contas/:id_conta', autenticarToken, rotasContas.listarPorID)
 
 //Rotas transações
-app.post('/transacoes', rotasTransacoes.nova)
-app.put('/transacoes/:id_transacao', rotasTransacoes.atualizar)
-app.get('/transacoes', rotasTransacoes.listar)
-app.delete('/transacoes/:id_transacao', rotasTransacoes.deletar)
-app.get('/transacoes/:id_transacao', rotasTransacoes.listarPorID)
+app.post('/transacoes', autenticarToken, rotasTransacoes.nova)
+app.get('/transacoes/somarTransacoes', autenticarToken, rotasTransacoes.somarTransacoes)
+app.get('/transacoes/filtroData', autenticarToken, rotasTransacoes.filtrarPorData)
+app.get('/transacoes/transacoesVencidas/:id_usuario', autenticarToken, rotasTransacoes.transacoesVencidas)
+app.put('/transacoes/:id_transacao', autenticarToken, rotasTransacoes.atualizar)
+app.get('/transacoes', autenticarToken, rotasTransacoes.listar)
+app.delete('/transacoes/:id_transacao', autenticarToken, rotasTransacoes.deletar)
+app.get('/transacoes/:id_transacao', autenticarToken, rotasTransacoes.listarPorID)
 
 const porta = 3000; //define a porta do servidor
 app.listen(porta, () => {
