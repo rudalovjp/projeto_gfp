@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 
 class rotasCategorias {
     static async novaCategoria(req, res) {
-        const { nome, tipo_transacao, gasto_fixo, id_usuario } = req.body;
+        const { nome, tipo_transacao, gasto_fixo, cor, icone, id_usuario } = req.body;
 
         try {
-            const categoria = await BD.query('INSERT INTO categorias (nome, tipo_transacao, gasto_fixo, id_usuario) VALUES ($1,$2,$3,$4) RETURNING *', [nome, tipo_transacao, gasto_fixo, id_usuario]);
+            const categoria = await BD.query('INSERT INTO categorias (nome, tipo_transacao, gasto_fixo, cor, icone, id_usuario) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *', [nome, tipo_transacao, gasto_fixo, cor, icone, id_usuario]);
             res.status(201).json(categoria.rows[0]);
         } catch (error) {
             console.error('Erro ao criar categoria', error);

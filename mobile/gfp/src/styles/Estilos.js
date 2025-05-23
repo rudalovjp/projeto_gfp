@@ -62,6 +62,44 @@ const Estilos = {
         fontSize: 16,
         fontWeight: 'bold',
     },
+    conteudoHeader: {
+        flex: 1,
+        backgroundColor: corSecundaria,
+    },
+    conteudoCorpo: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 25,
+        borderTopRightRadius: 25,
+        padding: 15
+    },
+    imagemLista: {
+        width: 35,
+        height: 35,
+        marginRight: 10,
+    },
+    itemLista: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 7,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+    },
+    textContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    inputCad: {
+        marginTop: 5,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        backgroundColor: '#fff'
+    }
+
 }
 
 export default Estilos;

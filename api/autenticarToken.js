@@ -3,18 +3,18 @@ import jwt from 'jsonwebtoken';
 const SECRET_KEY = 'sua_chave_secreta'; // Troque por uma chave segura
 
 export function autenticarToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-        return res.status(401).json({ message: 'Token não fornecido' });
-    }
+  console.log("Token recebido:", token);
+  
 
-    jwt.verify(token, SECRET_KEY, (err, usuario) => {
-        if (err) {
-            return res.status(403).json({ message: 'Token inválido' });
-        }
-        req.usuario = usuario;
-        next();
-    });
+  if (!token) return res.status(403).json({ message: "Token não fornecido" });
+
+  jwt.verify(token, SECRET_KEY, (err, usuario) => {
+    if (err) return res.status(403).json({ message: "Token inválido" });
+
+    req.usuario = usuario;
+    next();
+  });
 }

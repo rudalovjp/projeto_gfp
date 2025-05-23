@@ -1,12 +1,12 @@
 import express from 'express';
 import { testarConexao } from './db.js';
 import cors from 'cors';
-import rotasUsuarios from './routes/rotasUsuarios.js';
+import rotasUsuarios, {autenticarToken} from './routes/rotasUsuarios.js';
 import rotasCategorias from './routes/rotasCategorias.js';
 import rotasSubCategorias from './routes/rotasSubCategorias.js';
 import rotasContas from './routes/rotasContas.js';
 import rotasTransacoes from './routes/rotasTransacoes.js';
-import { autenticarToken } from './autenticarToken.js';
+// import { autenticarToken } from './autenticarToken.js';
 
 const app = express();
  //testa a conexão com o banco de dados
@@ -28,11 +28,11 @@ app.patch('/usuarios/:id_usuario', rotasUsuarios.atualizar)
 app.post('/usuarios/login', rotasUsuarios.login)
 
 //Rotas categorias
-app.post('/categorias', autenticarToken, rotasCategorias.novaCategoria)
+app.post('/categorias', rotasCategorias.novaCategoria)
 app.put('/categorias/:id_categoria', autenticarToken, rotasCategorias.atualizarCategoria)
 app.get('/categorias/filtrarCategoria', autenticarToken, rotasCategorias.filtrarCategoria)
-app.get('/categorias', autenticarToken, rotasCategorias.listarCategorias)
-app.delete('/categorias/:id_categoria', autenticarToken, rotasCategorias.deletarCategoria)
+app.get('/categorias', rotasCategorias.listarCategorias)
+app.delete('/categorias/:id_categoria', rotasCategorias.deletarCategoria)
 app.patch('/categorias/:id_categoria', autenticarToken, rotasCategorias.atualizar)
 app.get('/categorias/:id_categoria', autenticarToken, rotasCategorias.listarCategoriaPorId)
 
@@ -44,11 +44,11 @@ app.delete('/subcategorias/:id_subcategoria', autenticarToken, rotasSubCategoria
 app.get('/subcategorias/:id_subcategoria', autenticarToken, rotasSubCategorias.listarSubCategoriaPorId)
 
 //Rotas locais de transações
-app.post('/contas', autenticarToken, rotasContas.nova)
+app.post('/contas', rotasContas.nova)
 app.get('/contas/filtrarConta', autenticarToken, rotasContas.filtrarConta)
-app.put('/contas/:id_conta', autenticarToken, rotasContas.atualizar)
-app.get('/contas', autenticarToken, rotasContas.listar)
-app.delete('/contas/:id_conta', autenticarToken, rotasContas.deletar)
+app.put('/contas/:id_conta', rotasContas.atualizar)
+app.get('/contas', rotasContas.listar)
+app.delete('/contas/:id_conta', rotasContas.deletar)
 app.get('/contas/:id_conta', autenticarToken, rotasContas.listarPorID)
 
 //Rotas transações

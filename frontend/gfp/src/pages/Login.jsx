@@ -45,6 +45,19 @@ export default function Login() {
         }
     }
 
+     useEffect(() => {
+        const buscarUsuarioLogado = async () => {
+            const usuarioLogado = await localStorage.getItem('UsuarioLogado');
+            if (usuarioLogado) {
+                const usuario = JSON.parse(usuarioLogado);
+                if (usuario.lembrar == true) {
+                    navigate('/principal');
+                }
+            } else {
+                navigate('Login');
+            }
+        }
+    }, [])
 
     return (
         <div className="login-container">
