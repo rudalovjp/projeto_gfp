@@ -8,14 +8,20 @@ import rotasContas from './routes/rotasContas.js';
 import rotasTransacoes from './routes/rotasTransacoes.js';
 // import { autenticarToken } from './autenticarToken.js';
 
+import swaggerUI from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
+
 const app = express();
  //testa a conexão com o banco de dados
 
 app.use(cors()); //habilita o cors
 app.use(express.json()); //habilita o json no express
 testarConexao();
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
 app.get('/', (req, res) => {
-    res.send('API funcionando!'); //responde com uma mensagem de sucesso
+    res.redirect('/api-docs'); //responde com uma mensagem de sucesso
 })
 
 //Rotas usuarios
