@@ -67,7 +67,7 @@ class rotasCategorias {
     }
     static async listarCategorias(req, res) {
         try {
-            const categorias = await BD.query('SELECT * FROM categorias');
+            const categorias = await BD.query('SELECT * FROM categorias where ativo = true');
             res.status(200).json(categorias.rows);
         } catch (error) {
             res.status(500).json({ error: 'Erro ao listar categorias', error: error.message });
@@ -77,7 +77,7 @@ class rotasCategorias {
         const { id_categoria } = req.params;
 
         try {
-            const categoria = await BD.query('DELETE FROM categorias WHERE id_categoria = $1 RETURNING *', [id_categoria]);
+            const categoria = await BD.query('update categorias set ativo = false WHERE id_categoria = $1 RETURNING *', [id_categoria]);
             return res.status(200).json({ message: 'Categoria deletada com sucesso', categoria: categoria.rows[0] });
         } catch (error) {
             res.status(500).json({ error: 'Erro ao deletar categoria', error: error.message });
