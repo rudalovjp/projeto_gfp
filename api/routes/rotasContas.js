@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 
 class rotasNovasContas {
     static async nova(req, res) {
-        const { nome, tipo_conta, saldo } = req.body;
+        const { nome, tipo_conta, saldo} = req.body;
 
         try{
-            const contas = await BD.query('INSERT INTO contas (nome, tipo_conta, saldo) VALUES ($1, $2, $3) RETURNING *', [nome, tipo_conta, saldo]);
+            const contas = await BD.query('INSERT INTO contas (nome, tipo_conta, saldo, ativo) VALUES ($1, $2, $3, $4) RETURNING *', [nome, tipo_conta, saldo, true]);
             res.status(201).json(contas.rows[0]);
         } catch(error){
             console.error('Erro ao criar local de transação', error);
@@ -28,7 +28,7 @@ class rotasNovasContas {
     }
     static async listar(req, res) {
         try{
-            const contas = await BD.query('SELECT * FROM contas');
+            const contas = await BD.query('SELECT * FROM contas WHERE ativo = true order BY nome');
             res.status(200).json(contas.rows);
         }catch(error){
             res.status(500).json({ error: 'Erro ao listar locais de transação', error: error.message });
